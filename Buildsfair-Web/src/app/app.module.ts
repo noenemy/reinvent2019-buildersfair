@@ -18,6 +18,7 @@ import { StageObjectService } from './_services/stageobject.service';
 import { AlertifyService } from './_services/alertify.service';
 import { GameResultService } from './_services/gameresult.service';
 import { WebcamModule } from 'ngx-webcam';
+import { TrailerComponent } from './trailer/trailer.component';
 
 @NgModule({
    declarations: [
@@ -27,7 +28,8 @@ import { WebcamModule } from 'ngx-webcam';
       GameComponent,
       LeaderboardComponent,
       DebugComponent,
-      TestComponent
+      TestComponent,
+      TrailerComponent
    ],
    imports: [
       BrowserModule,

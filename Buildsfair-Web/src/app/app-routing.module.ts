@@ -5,6 +5,7 @@ import { LeaderboardComponent } from './leaderboard/leaderboard.component';
 import { GameComponent } from './game/game.component';
 import { DebugComponent } from './debug/debug.component';
 import { TestComponent } from './test/test.component';
+import { TrailerComponent } from './trailer/trailer.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'game', component: GameComponent },
   { path: 'debug', component: DebugComponent },
   { path: 'playdemo', component: TestComponent },
+  { path: 'trailer', component: TrailerComponent },
   { path: '**', redirectTo: 'home', pathMatch: 'full' }
 ];
 
