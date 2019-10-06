@@ -13,6 +13,7 @@ import { GameService } from './_services/game.service';
 import { StagelogService } from './_services/stagelog.service';
 import { LeaderboardService } from './_services/leaderboard.service';
 import { HttpClientModule } from '@angular/common/http';
+import { StageService } from './_services/stage.service';
 
 @NgModule({
    declarations: [
@@ -33,6 +34,7 @@ import { HttpClientModule } from '@angular/common/http';
       GameService,
       StagelogService,
       LeaderboardService,
+      StageService
    ],
    bootstrap: [
       AppComponent
