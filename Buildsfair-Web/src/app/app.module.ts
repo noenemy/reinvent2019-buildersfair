@@ -15,6 +15,7 @@ import { LeaderboardService } from './_services/leaderboard.service';
 import { HttpClientModule } from '@angular/common/http';
 import { StageService } from './_services/stage.service';
 import { StageObjectService } from './_services/stageobject.service';
+import { AlertifyService } from './_services/alertify.service';
 
 @NgModule({
    declarations: [
@@ -36,7 +37,8 @@ import { StageObjectService } from './_services/stageobject.service';
       StagelogService,
       LeaderboardService,
       StageService,
-      StageObjectService
+      StageObjectService,
+      AlertifyService
    ],
    bootstrap: [
       AppComponent
