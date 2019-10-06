@@ -6,10 +6,36 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-
+  stage: string;
+  gameId: number;
   constructor() { }
 
   ngOnInit() {
+    this.stage = 'start';
+    this.gameId = 0;
   }
 
+  goStage(stage: string) {
+    this.stage = stage;
+  }
+
+  onGameCreated(gameId: number) {
+    this.gameId = gameId;
+    this.goStage('stage');
+
+  }
+
+  onStageCompleted(stageId: number) {
+    let isGameCompleted = false;
+
+    if (stageId === 0 || stageId >= 2) {
+      isGameCompleted = true;
+    }
+
+    if (isGameCompleted) {
+      this.goStage('result');
+    } else {
+      this.goStage('stage');
+    }
+  }
 }
