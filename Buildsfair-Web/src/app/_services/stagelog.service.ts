@@ -7,7 +7,7 @@ import { StageLog } from '../_models/stagelog';
 @Injectable({
   providedIn: 'root'
 })
-export class StagelogService {
+export class StageLogService {
   baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }

@@ -10,7 +10,7 @@ import { LeaderboardComponent } from './leaderboard/leaderboard.component';
 import { DebugComponent } from './debug/debug.component';
 import { TestComponent } from './test/test.component';
 import { GameService } from './_services/game.service';
-import { StagelogService } from './_services/stagelog.service';
+import { StageLogService } from './_services/stagelog.service';
 import { LeaderboardService } from './_services/leaderboard.service';
 import { HttpClientModule } from '@angular/common/http';
 import { StageService } from './_services/stage.service';
@@ -38,7 +38,7 @@ import { WebcamModule } from 'ngx-webcam';
    providers: [
       GameService,
       GameResultService,
-      StagelogService,
+      StageLogService,
       LeaderboardService,
       StageService,
       StageObjectService,
