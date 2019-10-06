@@ -16,6 +16,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { StageService } from './_services/stage.service';
 import { StageObjectService } from './_services/stageobject.service';
 import { AlertifyService } from './_services/alertify.service';
+import { GameResultService } from './_services/gameresult.service';
 
 @NgModule({
    declarations: [
@@ -34,6 +35,7 @@ import { AlertifyService } from './_services/alertify.service';
    ],
    providers: [
       GameService,
+      GameResultService,
       StagelogService,
       LeaderboardService,
       StageService,
