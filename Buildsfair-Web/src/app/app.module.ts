@@ -9,6 +9,10 @@ import { GameComponent } from './game/game.component';
 import { LeaderboardComponent } from './leaderboard/leaderboard.component';
 import { DebugComponent } from './debug/debug.component';
 import { TestComponent } from './test/test.component';
+import { GameService } from './_services/game.service';
+import { StagelogService } from './_services/stagelog.service';
+import { LeaderboardService } from './_services/leaderboard.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
    declarations: [
@@ -22,9 +26,14 @@ import { TestComponent } from './test/test.component';
    ],
    imports: [
       BrowserModule,
+      HttpClientModule,
       AppRoutingModule
    ],
-   providers: [],
+   providers: [
+      GameService,
+      StagelogService,
+      LeaderboardService,
+   ],
    bootstrap: [
       AppComponent
    ]
