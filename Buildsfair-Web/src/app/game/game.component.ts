@@ -8,11 +8,14 @@ import { Component, OnInit } from '@angular/core';
 export class GameComponent implements OnInit {
   stage: string;
   gameId: number;
+  stageId: number;
+
   constructor() { }
 
   ngOnInit() {
     this.stage = 'start';
     this.gameId = 0;
+    this.stageId = 0;
   }
 
   goStage(stage: string) {
