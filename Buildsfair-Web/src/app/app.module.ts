@@ -19,6 +19,11 @@ import { AlertifyService } from './_services/alertify.service';
 import { GameResultService } from './_services/gameresult.service';
 import { WebcamModule } from 'ngx-webcam';
 import { TrailerComponent } from './trailer/trailer.component';
+import { GameStageComponent } from './game/game-stage/game-stage.component';
+import { GameSplashComponent } from './game/game-splash/game-splash.component';
+import { GameStartComponent } from './game/game-start/game-start.component';
+import { GameResultComponent } from './game/game-result/game-result.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
    declarations: [
@@ -29,13 +34,18 @@ import { TrailerComponent } from './trailer/trailer.component';
       LeaderboardComponent,
       DebugComponent,
       TestComponent,
-      TrailerComponent
+      TrailerComponent,
+      GameStageComponent,
+      GameSplashComponent,
+      GameStartComponent,
+      GameResultComponent
    ],
    imports: [
       BrowserModule,
       HttpClientModule,
       AppRoutingModule,
-      WebcamModule
+      WebcamModule,
+      ReactiveFormsModule
    ],
    providers: [
       GameService,

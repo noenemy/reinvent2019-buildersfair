@@ -1,5 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { HttpClient } from 'selenium-webdriver/http';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { StageService } from 'src/app/_services/stage.service';
 import { StageLogService } from 'src/app/_services/stagelog.service';
 import { AlertifyService } from 'src/app/_services/alertify.service';
@@ -7,13 +6,14 @@ import { WebcamUtil, WebcamImage, WebcamInitError } from 'ngx-webcam';
 import { StageInfo } from 'src/app/_models/stageinfo';
 import { StageScore } from 'src/app/_models/stagescore';
 import { Subject, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-game-stage',
   templateUrl: './game-stage.component.html',
   styleUrls: ['./game-stage.component.css']
 })
-export class GameStageComponent implements OnInit {
+export class GameStageComponent implements OnInit, OnDestroy {
 
   // ===============================================================================
   // Angular component constructor and destructor
@@ -46,7 +46,7 @@ export class GameStageComponent implements OnInit {
   public clearScore: number;
   public stageScore: number;
   public totalScore: number;
-  public stage_completed: string;
+  public stageIsCompleted: string;
 
   // object info
   public objects: string[];
@@ -127,7 +127,7 @@ export class GameStageComponent implements OnInit {
     // Use enter key to get the current snapshot
     // tslint:disable-next-line:only-arrow-functions
     document.body.addEventListener('keypress', function(event) {
-      if(event.keyCode === 13) {
+      if (event.keyCode === 13) {
           console.log('You pressed Enter key.');
           document.getElementById('buttonSnapshot').click();
       }
@@ -162,8 +162,7 @@ export class GameStageComponent implements OnInit {
     this.displayStageClearModal = 'none';
     this.displayStageFailedModal = 'none';
 
-    if (this.stage_completed === 'Y' && this.stageId < 2)
-    {
+    if (this.stageIsCompleted === 'Y' && this.stageId < 2) {
       this.stageId++;
       this.displayObjectList = false;
 
@@ -245,8 +244,7 @@ export class GameStageComponent implements OnInit {
         this.foundObjectCount++;
 
         this.message = 'Great!';
-        if (this.foundObjectCount === this.totalObjectCount)
-        {
+        if (this.foundObjectCount === this.totalObjectCount) {
           this.clearTimer();
           this.gameStarted = false;
 
@@ -255,7 +253,7 @@ export class GameStageComponent implements OnInit {
           this.totalScore += this.clearScore;
           this.totalScore += this.timeScore;
           this.stageScore = this.objectsScore + this.clearScore + this.timeScore;
-          this.stage_completed = 'Y';
+          this.stageIsCompleted = 'Y';
 
           this.updateStageLog();
 
@@ -288,7 +286,7 @@ export class GameStageComponent implements OnInit {
       console.log('addStageLog failed.');
     });
   }
-  
+
   public updateStageLog() {
 
     const stageLog = {
@@ -300,7 +298,7 @@ export class GameStageComponent implements OnInit {
       clear_score: this.clearScore,
       stage_score: this.stageScore,
       total_score: this.totalScore,
-      completed_yn : this.stage_completed
+      completed_yn : this.stageIsCompleted
     };
 
     this.stageLogService.updateStageLog(stageLog).subscribe(response => {
@@ -323,7 +321,7 @@ export class GameStageComponent implements OnInit {
     this.intervalId = window.setInterval(() => {
       this.seconds -= 0.1;
 
-      if (this.seconds ===0 || this.seconds < 0) {
+      if (this.seconds === 0 || this.seconds < 0) {
         this.clearTimer();
         this.seconds = 0;
 
@@ -333,7 +331,7 @@ export class GameStageComponent implements OnInit {
         this.clearScore = 0;
         this.timeScore = 0;
         this.stageScore = this.objectsScore;
-        this.stage_completed = 'N';
+        this.stageIsCompleted = 'N';
 
         this.alertify.success('Time over!');
 
@@ -379,8 +377,7 @@ export class GameStageComponent implements OnInit {
     this.deviceId = deviceId;
   }
 
-  public loadAudio()
-  {
+  public loadAudio() {
     this.audioClock.src = '../../../assets/audios/clock-ticking.mp3';
     this.audioClock.loop = true;
     this.audioClock.load();
