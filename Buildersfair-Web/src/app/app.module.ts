@@ -24,21 +24,27 @@ import { GameSplashComponent } from './game/game-splash/game-splash.component';
 import { GameStartComponent } from './game/game-start/game-start.component';
 import { GameResultComponent } from './game/game-result/game-result.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TestRekognitionComponent } from './test/test-rekognition/test-rekognition.component';
+import { TestTextractComponent } from './test/test-textract/test-textract.component';
+import { TestTranscribeComponent } from './test/test-transcribe/test-transcribe.component';
 
 @NgModule({
    declarations: [
       AppComponent,
       NavComponent,
       HomeComponent,
-      GameComponent,
       LeaderboardComponent,
       DebugComponent,
-      TestComponent,
       TrailerComponent,
+      GameComponent,
       GameStageComponent,
       GameSplashComponent,
       GameStartComponent,
-      GameResultComponent
+      GameResultComponent,
+      TestComponent,
+      TestRekognitionComponent,
+      TestTextractComponent,
+      TestTranscribeComponent
    ],
    imports: [
       BrowserModule,
