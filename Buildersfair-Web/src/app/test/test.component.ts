@@ -21,14 +21,22 @@ export class TestComponent implements OnInit {
     if (feature === 'rekognition') {
       document.getElementById('nav-rekognition-tab').classList.add('active');
       document.getElementById('nav-textract-tab').classList.remove('active');
+      document.getElementById('nav-polly-tab').classList.remove('active');
       document.getElementById('nav-transcribe-tab').classList.remove('active');
     } else if (feature === 'textract') {
       document.getElementById('nav-rekognition-tab').classList.remove('active');
       document.getElementById('nav-textract-tab').classList.add('active');
+      document.getElementById('nav-polly-tab').classList.remove('active');
+      document.getElementById('nav-transcribe-tab').classList.remove('active');
+    } else if (feature === 'polly') {
+      document.getElementById('nav-rekognition-tab').classList.remove('active');
+      document.getElementById('nav-textract-tab').classList.remove('active');
+      document.getElementById('nav-polly-tab').classList.add('active');
       document.getElementById('nav-transcribe-tab').classList.remove('active');
     } else if (feature === 'transcribe') {
       document.getElementById('nav-rekognition-tab').classList.remove('active');
       document.getElementById('nav-textract-tab').classList.remove('active');
+      document.getElementById('nav-polly-tab').classList.remove('active');
       document.getElementById('nav-transcribe-tab').classList.add('active');
     }
 

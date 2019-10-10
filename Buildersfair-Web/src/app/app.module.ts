@@ -27,6 +27,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TestRekognitionComponent } from './test/test-rekognition/test-rekognition.component';
 import { TestTextractComponent } from './test/test-textract/test-textract.component';
 import { TestTranscribeComponent } from './test/test-transcribe/test-transcribe.component';
+import { TestPollyComponent } from './test/test-polly/test-polly.component';
 
 @NgModule({
    declarations: [
@@ -44,6 +45,7 @@ import { TestTranscribeComponent } from './test/test-transcribe/test-transcribe.
       TestComponent,
       TestRekognitionComponent,
       TestTextractComponent,
+      TestPollyComponent,
       TestTranscribeComponent
    ],
    imports: [
