@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { StageService } from '../../_services/stage.service';
 import { AlertifyService } from '../../_services/alertify.service';
 import { Observable, Subject } from 'rxjs';
 import { WebcamImage, WebcamInitError, WebcamUtil } from 'ngx-webcam';
+import { TestService } from 'src/app/_services/test.service';
 
 @Component({
   selector: 'app-test-rekognition',
@@ -25,7 +25,7 @@ export class TestRekognitionComponent implements OnInit {
   public errors: WebcamInitError[] = [];
 
   constructor(private http: HttpClient,
-              private stageService: StageService,
+              private testService: TestService,
               private alertify: AlertifyService) { }
 
   // latest snapshot
@@ -98,7 +98,7 @@ export class TestRekognitionComponent implements OnInit {
 
     this.alertify.message('Now working on it...');
 
-    this.stageService.uploadTest(body).subscribe(response => {
+      this.testService.rekognitionTest(body).subscribe(response => {
 
       this.alertify.success('Recognition success.');
       this.labels = response;

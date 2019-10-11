@@ -19,13 +19,13 @@ namespace BuildersFair_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TestPicturesController : ControllerBase
+    public class TestController : ControllerBase
     {
         private DataContext _context;
         IAmazonS3 S3Client { get; set; }
         IAmazonRekognition RekognitionClient { get; set; }        
 
-        public TestPicturesController(DataContext context, IAmazonS3 s3Client, IAmazonRekognition rekognitionClient)
+        public TestController(DataContext context, IAmazonS3 s3Client, IAmazonRekognition rekognitionClient)
         {
             _context = context;
             this.S3Client = s3Client;
@@ -61,7 +61,8 @@ namespace BuildersFair_API.Controllers
             return Ok(values);
         }
 
-        // POST api/testpicture
+        // POST api/test/rekognition
+        [Route("rekognition")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TestPicturePostImageDTO dto)
         {
