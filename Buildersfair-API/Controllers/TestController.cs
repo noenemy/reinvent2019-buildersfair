@@ -64,7 +64,7 @@ namespace BuildersFair_API.Controllers
         // POST api/test/rekognition
         [Route("rekognition")]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] TestPicturePostImageDTO dto)
+        public async Task<IActionResult> RekognitionTest([FromBody] RekognitionTestDTO dto)
         {
             List<Label> labels = null;
 
@@ -112,6 +112,60 @@ namespace BuildersFair_API.Controllers
             }
             
             return Ok(labels);            
+        } 
+
+
+        // POST api/test/textract
+        [Route("textract")]
+        [HttpPost]
+        public async Task<IActionResult> TextractTest([FromBody] TextractTestDTO dto)
+        {
+            List<Label> labels = null;
+
+            Guid g = Guid.NewGuid();
+            string guidString = Convert.ToBase64String(g.ToByteArray());
+            guidString = guidString.Replace("=","");
+            guidString = guidString.Replace("+","");
+            guidString = guidString.Replace("/","");
+
+            // Retrieving image data
+            string keyName = string.Format("test/{0}.jpg", guidString);
+            byte[] imageByteArray = Convert.FromBase64String(dto.base64Image);
+            if (imageByteArray.Length == 0)
+                return BadRequest("Image length is 0.");
+
+            TestPicture newTestPicture = null;
+
+            using (MemoryStream ms = new MemoryStream(imageByteArray))
+            {
+                // call Rekonition API
+                labels = await RekognitionUtil.GetObjectDetailFromStream(this.RekognitionClient, ms);   
+
+                // Database update
+                newTestPicture = new TestPicture{
+                    use_yn = "Y",
+                    file_loc = keyName
+                };
+                
+                _context.TestPicture.Add(newTestPicture);
+                await _context.SaveChangesAsync(); 
+
+                foreach (Label item in labels)
+                {
+                    TestPictureLabel newLabel = new TestPictureLabel{
+                        picture_id = newTestPicture.picture_id,
+                        label_name = item.Name,
+                        confidence = item.Confidence
+                    };
+                    _context.TestPictureLabel.Add(newLabel);
+                    await _context.SaveChangesAsync();  
+                }
+                
+                // Upload image to S3 bucket
+                // await Task.Run(() => S3Util.UploadToS3(this.S3Client, "S3_BUCKET_NAME_HERE", "KEY_NAME_HERE", ms));
+            }
+            
+            return Ok(null);            
         } 
     }
 }

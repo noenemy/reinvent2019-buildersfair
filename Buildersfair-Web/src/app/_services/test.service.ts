@@ -15,4 +15,7 @@ export class TestService {
     return this.http.post(this.baseUrl + 'test/rekognition', body);
   }
 
+  textractTest(body): Observable<any> {
+    return this.http.post(this.baseUrl + 'test/textract', body);
+  }
 }
