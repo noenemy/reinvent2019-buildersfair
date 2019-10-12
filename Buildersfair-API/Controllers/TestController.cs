@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using Amazon.Rekognition;
 using Amazon.Rekognition.Model;
 using Amazon.S3;
+using Amazon.Textract;
+using Amazon.Textract.Model;
+using Buildersfair_API.Utils;
 using BuildersFair_API.Data;
 using BuildersFair_API.DTOs;
 using BuildersFair_API.Models;
@@ -23,13 +26,16 @@ namespace BuildersFair_API.Controllers
     {
         private DataContext _context;
         IAmazonS3 S3Client { get; set; }
-        IAmazonRekognition RekognitionClient { get; set; }        
+        IAmazonRekognition RekognitionClient { get; set; }
+        IAmazonTextract TextractClient { get; set; }   
 
-        public TestController(DataContext context, IAmazonS3 s3Client, IAmazonRekognition rekognitionClient)
+        public TestController(DataContext context, IAmazonS3 s3Client, 
+            IAmazonRekognition rekognitionClient, IAmazonTextract textractClient)
         {
             _context = context;
             this.S3Client = s3Client;
-            this.RekognitionClient = rekognitionClient;            
+            this.RekognitionClient = rekognitionClient;
+            this.TextractClient = textractClient;         
         }
 
         // GET api/testpictures
@@ -120,7 +126,7 @@ namespace BuildersFair_API.Controllers
         [HttpPost]
         public async Task<IActionResult> TextractTest([FromBody] TextractTestDTO dto)
         {
-            List<Label> labels = null;
+            List<Block> blocks = null;
 
             Guid g = Guid.NewGuid();
             string guidString = Convert.ToBase64String(g.ToByteArray());
@@ -134,13 +140,14 @@ namespace BuildersFair_API.Controllers
             if (imageByteArray.Length == 0)
                 return BadRequest("Image length is 0.");
 
-            TestPicture newTestPicture = null;
+            //TestPicture newTestPicture = null;
 
             using (MemoryStream ms = new MemoryStream(imageByteArray))
             {
-                // call Rekonition API
-                labels = await RekognitionUtil.GetObjectDetailFromStream(this.RekognitionClient, ms);   
+                // call Textract API
+                blocks = await TextractUtil.GetTextFromStream(this.TextractClient, ms);   
 
+                /* 
                 // Database update
                 newTestPicture = new TestPicture{
                     use_yn = "Y",
@@ -148,17 +155,18 @@ namespace BuildersFair_API.Controllers
                 };
                 
                 _context.TestPicture.Add(newTestPicture);
-                await _context.SaveChangesAsync(); 
+                await _context.SaveChangesAsync();
+                */
 
-                foreach (Label item in labels)
+                foreach (Block item in blocks)
                 {
-                    TestPictureLabel newLabel = new TestPictureLabel{
-                        picture_id = newTestPicture.picture_id,
-                        label_name = item.Name,
-                        confidence = item.Confidence
-                    };
-                    _context.TestPictureLabel.Add(newLabel);
-                    await _context.SaveChangesAsync();  
+                    //TestPictureLabel newLabel = new TestPictureLabel{
+                    //    picture_id = newTestPicture.picture_id,
+                    //    label_name = item.Name,
+                    //    confidence = item.Confidence
+                    //};
+                    //_context.TestPictureLabel.Add(newLabel);
+                    //await _context.SaveChangesAsync();  
                 }
                 
                 // Upload image to S3 bucket
