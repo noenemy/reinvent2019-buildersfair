@@ -9,4 +9,9 @@ namespace BuildersFair_API.DTOs
     {
         public string base64Image { get; set; }
     }
+
+    public class PollyTestDTO
+    {
+        public string text { get; set; }
+    }
 }
