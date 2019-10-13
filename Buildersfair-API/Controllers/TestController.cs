@@ -44,35 +44,6 @@ namespace BuildersFair_API.Controllers
             this.TranscribeClient = transcribeClient;
         }
 
-        // GET api/testpictures
-        [HttpGet]
-        public async Task<IActionResult> GetTestPictures()
-        {
-            var values = await _context.TestPicture.ToListAsync();
-            return Ok(values);
-        }
-
-        // GET api/testpictures
-        [HttpGet("{picture_id}")]
-        public async Task<IActionResult> UpdateTestPicture(int picture_id, [FromBody] string useYN)
-        {
-            TestPicture testPicture = await _context.TestPicture.Where(x => x.picture_id == picture_id).FirstOrDefaultAsync();
-            testPicture.use_yn = useYN;
-
-            var value = _context.TestPicture.Add(testPicture);
-            await _context.SaveChangesAsync();
-            
-            return Ok(value);
-        }
-
-        // GET api/testpictures/5
-        [HttpGet("{picture_id}")]
-        public async Task<IActionResult> GetTestPicture(int picture_id)
-        {
-            var values = await _context.TestPicture.Where(x => x.picture_id == picture_id).ToListAsync();
-            return Ok(values);
-        }
-
         // POST api/test/rekognition
         [Route("rekognition")]
         [HttpPost]
@@ -92,32 +63,10 @@ namespace BuildersFair_API.Controllers
             if (imageByteArray.Length == 0)
                 return BadRequest("Image length is 0.");
 
-            TestPicture newTestPicture = null;
-
             using (MemoryStream ms = new MemoryStream(imageByteArray))
             {
                 // call Rekonition API
                 labels = await RekognitionUtil.GetObjectDetailFromStream(this.RekognitionClient, ms);   
-
-                // Database update
-                newTestPicture = new TestPicture{
-                    use_yn = "Y",
-                    file_loc = keyName
-                };
-                
-                _context.TestPicture.Add(newTestPicture);
-                await _context.SaveChangesAsync(); 
-
-                foreach (Label item in labels)
-                {
-                    TestPictureLabel newLabel = new TestPictureLabel{
-                        picture_id = newTestPicture.picture_id,
-                        label_name = item.Name,
-                        confidence = item.Confidence
-                    };
-                    _context.TestPictureLabel.Add(newLabel);
-                    await _context.SaveChangesAsync();  
-                }
                 
                 // Upload image to S3 bucket
                 // await Task.Run(() => S3Util.UploadToS3(this.S3Client, "S3_BUCKET_NAME_HERE", "KEY_NAME_HERE", ms));
