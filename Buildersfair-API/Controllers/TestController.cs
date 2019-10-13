@@ -10,7 +10,7 @@ using Amazon.Rekognition;
 using Amazon.Rekognition.Model;
 using Amazon.S3;
 using Amazon.Textract;
-using Amazon.Textract.Model;
+using Amazon.TranscribeService;
 using Buildersfair_API.Utils;
 using BuildersFair_API.Data;
 using BuildersFair_API.DTOs;
@@ -30,16 +30,18 @@ namespace BuildersFair_API.Controllers
         IAmazonRekognition RekognitionClient { get; set; }
         IAmazonTextract TextractClient { get; set; }   
         IAmazonPolly PollyClient { get; set; }
+        IAmazonTranscribeService TranscribeClient { get; set; }
 
         public TestController(DataContext context, IAmazonS3 s3Client, 
             IAmazonRekognition rekognitionClient, IAmazonTextract textractClient,
-            IAmazonPolly pollyClient)
+            IAmazonPolly pollyClient, IAmazonTranscribeService transcribeClient)
         {
             _context = context;
             this.S3Client = s3Client;
             this.RekognitionClient = rekognitionClient;
             this.TextractClient = textractClient;
             this.PollyClient = pollyClient;
+            this.TranscribeClient = transcribeClient;
         }
 
         // GET api/testpictures
@@ -124,7 +126,6 @@ namespace BuildersFair_API.Controllers
             return Ok(labels);            
         } 
 
-
         // POST api/test/polly
         [Route("polly")]
         [HttpPost]
@@ -153,6 +154,29 @@ namespace BuildersFair_API.Controllers
             audioFilePath = S3Util.GetPresignedURL(this.S3Client, bucketName, key);
             
             return Ok(audioFilePath);            
+        }
+
+        // POST api/test/transcribe
+        [Route("transcribe")]
+        [HttpPost]
+        public async Task<IActionResult> TranscribeTest([FromBody] TranscribeTestDTO dto)
+        {
+            string transcriptionUri = null;
+
+            Guid g = Guid.NewGuid();
+            string guidString = Convert.ToBase64String(g.ToByteArray());
+            guidString = guidString.Replace("=","");
+            guidString = guidString.Replace("+","");
+            guidString = guidString.Replace("/","");
+
+            // Validation check
+            if (string.IsNullOrWhiteSpace(dto.mediaUri) == true)
+                return BadRequest("mediaURI is empty.");
+
+            // call Transcribe API
+            transcriptionUri = await TranscribeUtil.TranscribeDemo(this.TranscribeClient, dto.mediaUri);
+            
+            return Ok(transcriptionUri);            
         } 
     }
 }

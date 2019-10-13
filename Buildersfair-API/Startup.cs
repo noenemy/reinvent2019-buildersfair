@@ -2,6 +2,7 @@
 using Amazon.Rekognition;
 using Amazon.Textract;
 using Amazon.Polly;
+using Amazon.TranscribeService;
 using BuildersFair_API.Data;
 using BuildersFair_API.Models;
 using Microsoft.AspNetCore.Builder;
@@ -36,6 +37,7 @@ namespace BuildersFair_API
             services.AddAWSService<IAmazonRekognition>();
             services.AddAWSService<IAmazonTextract>();
             services.AddAWSService<IAmazonPolly>();
+            services.AddAWSService<IAmazonTranscribeService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddCors();

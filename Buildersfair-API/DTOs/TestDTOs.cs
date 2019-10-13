@@ -14,4 +14,9 @@ namespace BuildersFair_API.DTOs
     {
         public string text { get; set; }
     }
+
+    public class TranscribeTestDTO
+    {
+        public string mediaUri { get; set; }
+    }
 }
