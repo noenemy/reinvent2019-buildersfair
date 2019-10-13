@@ -22,4 +22,8 @@ export class TestService {
   pollyTest(body): Observable<any> {
     return this.http.post<any>(this.baseUrl + 'test/polly', body);
   }
+
+  transcribeTest(body): Observable<any> {
+    return this.http.post<any>(this.baseUrl + 'test/transcribe', body);
+  }  
 }

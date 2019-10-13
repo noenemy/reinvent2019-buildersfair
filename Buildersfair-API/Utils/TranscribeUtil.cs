@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Amazon.TranscribeService;
 using Amazon.TranscribeService.Model;
+using System.Threading;
 
 namespace Buildersfair_API.Utils
 {
@@ -18,10 +19,11 @@ namespace Buildersfair_API.Utils
 
             StartTranscriptionJobRequest transcriptionRequest = new StartTranscriptionJobRequest()
             {
-                TranscriptionJobName = "MyTranscriptionJob",
+                TranscriptionJobName = DateTime.Now.Millisecond.ToString(),
                 Media = media,
                 MediaFormat = MediaFormat.Mp3.ToString(),
-                LanguageCode = "en-US"
+                LanguageCode = "en-US",
+                OutputBucketName = "reinvent-indiamazones"
             };
 
             try
@@ -30,11 +32,35 @@ namespace Buildersfair_API.Utils
                 StartTranscriptionJobResponse transcriptionResponse = await transcriptionTask;
                 TranscriptionJob transcriptionJob = transcriptionResponse.TranscriptionJob;
                 
-                if (transcriptionJob.TranscriptionJobStatus == TranscriptionJobStatus.COMPLETED)
+                bool loop = true;
+                while (loop == true)
                 {
-                    DateTime completionTime = transcriptionJob.CompletionTime;
-                    result = transcriptionJob.Transcript.TranscriptFileUri;
+                    if (transcriptionResponse.TranscriptionJob.TranscriptionJobStatus == TranscriptionJobStatus.IN_PROGRESS)
+                    {
+                        Console.WriteLine(transcriptionResponse.TranscriptionJob.TranscriptionJobName);
+                        Console.WriteLine(transcriptionResponse.TranscriptionJob.TranscriptionJobStatus);
+                        if (transcriptionResponse.TranscriptionJob.Transcript != null)
+                            Console.WriteLine(transcriptionResponse.TranscriptionJob.Transcript.TranscriptFileUri);
+                        Thread.Sleep(3000);
+                    }
+                    else if (transcriptionResponse.TranscriptionJob.TranscriptionJobStatus == TranscriptionJobStatus.COMPLETED)
+                    {
+                        Console.Write("Transcription job completed.");
+                        DateTime completionTime = transcriptionJob.CompletionTime;
+                        result = transcriptionJob.Transcript.TranscriptFileUri;
+
+                        loop = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine(transcriptionResponse.TranscriptionJob.TranscriptionJobStatus);
+                        result = string.Empty;
+
+                        loop = false;
+                    }
                 }
+
+                result = transcriptionResponse.TranscriptionJob.Transcript.TranscriptFileUri;
             }
             catch (AmazonTranscribeServiceException transcribeException)
             {
