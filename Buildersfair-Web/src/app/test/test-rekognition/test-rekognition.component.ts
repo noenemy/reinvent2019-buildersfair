@@ -44,6 +44,7 @@ export class TestRekognitionComponent implements OnInit {
       });
 
     // Use enter key to get the current snapshot
+    // tslint:disable-next-line:only-arrow-functions
     document.body.addEventListener('keypress', function(event) {
       if (event.keyCode === 13) {
           console.log('You pressed Enter key.');
@@ -73,6 +74,7 @@ export class TestRekognitionComponent implements OnInit {
   }
 
   public handleImage(webcamImage: WebcamImage): void {
+    // tslint:disable-next-line:no-console
     console.info('received webcam image', webcamImage);
     this.webcamImage = webcamImage;
   }
@@ -98,7 +100,7 @@ export class TestRekognitionComponent implements OnInit {
 
     this.alertify.message('Now working on it...');
 
-      this.testService.rekognitionTest(body).subscribe(response => {
+    this.testService.rekognitionTest(body).subscribe(response => {
 
       this.alertify.success('Recognition success.');
       this.labels = response;
