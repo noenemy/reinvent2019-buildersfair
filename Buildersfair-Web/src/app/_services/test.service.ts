@@ -18,4 +18,8 @@ export class TestService {
   textractTest(body): Observable<any> {
     return this.http.post(this.baseUrl + 'test/textract', body);
   }
+
+  pollyTest(body): Observable<any> {
+    return this.http.post<any>(this.baseUrl + 'test/polly', body);
+  }
 }

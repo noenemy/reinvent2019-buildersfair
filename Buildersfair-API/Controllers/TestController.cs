@@ -112,7 +112,7 @@ namespace BuildersFair_API.Controllers
         [HttpPost]
         public async Task<IActionResult> PollyTest([FromBody] PollyTestDTO dto)
         {
-            string audioFilePath = null;
+            PollyResultDTO result = new PollyResultDTO();
 
             Guid g = Guid.NewGuid();
             string guidString = Convert.ToBase64String(g.ToByteArray());
@@ -125,16 +125,9 @@ namespace BuildersFair_API.Controllers
                 return BadRequest("Text is empty.");
 
             // call Polly API
-            Stream stream = await PollyUtil.PollyDemo(this.PollyClient, dto.text);
+            result.mediaUri = await PollyUtil.PollyDemo(this.PollyClient, this.S3Client, dto.text);
 
-            // Upload image to S3 bucket
-            string bucketName = "reinvent-indiamazones";
-            string key = dto.text;
-            await Task.Run(() => S3Util.UploadToS3(this.S3Client, bucketName, key, stream));
-
-            audioFilePath = S3Util.GetPresignedURL(this.S3Client, bucketName, key);
-            
-            return Ok(audioFilePath);            
+            return Ok(result);
         }
 
         // POST api/test/transcribe
