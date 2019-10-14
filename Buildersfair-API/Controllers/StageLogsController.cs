@@ -98,8 +98,6 @@ namespace BuildersFair_API.Controllers
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] StageLogPutDTO dto)
         {
-            Console.WriteLine("stagelogs PUT entered.");
-
             var stageLog = _context.StageLog.Where(x => x.game_id == dto.game_id && x.stage_id == dto.stage_id).FirstOrDefault();
             if (stageLog == null)
             {

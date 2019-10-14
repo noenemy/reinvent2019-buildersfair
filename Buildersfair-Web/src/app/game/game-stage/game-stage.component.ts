@@ -7,6 +7,7 @@ import { StageInfo } from 'src/app/_models/stageinfo';
 import { StageScore } from 'src/app/_models/stagescore';
 import { Subject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { CardObject } from 'src/app/_models/object';
 
 @Component({
   selector: 'app-game-stage',
@@ -49,7 +50,7 @@ export class GameStageComponent implements OnInit, OnDestroy {
   public stageIsCompleted: string;
 
   // object info
-  public objects: string[];
+  public objects: CardObject[];
   public totalObjectCount = 0;
   public foundObjectCount = 0;
 

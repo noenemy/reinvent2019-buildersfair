@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using Amazon.Rekognition;
 using Amazon.Rekognition.Model;
 using Amazon.S3;
+using Amazon.Textract;
+using Amazon.Textract.Model;
+using Buildersfair_API.Utils;
 using BuildersFair_API.Data;
 using BuildersFair_API.DTOs;
 using BuildersFair_API.Models;
@@ -23,13 +26,17 @@ namespace BuildersFair_API.Controllers
     {
         private DataContext _context;
         IAmazonS3 S3Client { get; set; }
-        IAmazonRekognition RekognitionClient { get; set; }        
+        IAmazonRekognition RekognitionClient { get; set; }
+        IAmazonTextract TextractClient { get; set; } 
 
-        public StagesController(DataContext context, IAmazonS3 s3Client, IAmazonRekognition rekognitionClient)
+        public StagesController(DataContext context, 
+            IAmazonS3 s3Client, IAmazonRekognition rekognitionClient,
+            IAmazonTextract textractClient)
         {
             _context = context;
             this.S3Client = s3Client;
-            this.RekognitionClient = rekognitionClient;            
+            this.RekognitionClient = rekognitionClient;
+            this.TextractClient = textractClient;        
         }
 
         [HttpGet]
@@ -57,11 +64,11 @@ namespace BuildersFair_API.Controllers
                     objectScore = 50;
                     break;
                 case 2:
-                    stageInfo.stage_time = 80;
-                    stageInfo.stage_difficulty = "Medium";
-                    difficulty = 2;
-                    objectCount = 7;
-                    objectScore = 100;
+                    stageInfo.stage_time = 45;
+                    stageInfo.stage_difficulty = "Easy";
+                    difficulty = 1;
+                    objectCount = 3;
+                    objectScore = 50;
                     break;
                 // case 3:
                 //     stageInfo.stage_time = 100;
@@ -76,18 +83,20 @@ namespace BuildersFair_API.Controllers
             }
             
             // get object list randomly
-            List<string> objectList = GetRandomStageObjectList(difficulty, objectCount);
+            //List<string> objectList = GetRandomStageObjectList(difficulty, objectCount);
+            List<StageObjectDTO> objectList = GetRandomStageObjectList(difficulty, objectCount);
             stageInfo.stage_objects = objectList;
 
             // Add object list to StageObject table
             List<StageObject> stageObjectList = new List<StageObject>();
-            foreach (string item in objectList)
+            //foreach (string item in objectList)
+            foreach (StageObjectDTO item in objectList)
             {
                 StageObject stageObject = new StageObject()
                 {
                     game_id = gameId,
                     stage_id = stageId,
-                    object_name = item,
+                    object_name = item.object_name,
                     object_score = objectScore,
                     found_yn = "N",
                     log_date = DateTime.Now
@@ -123,40 +132,74 @@ namespace BuildersFair_API.Controllers
 
             using (MemoryStream ms = new MemoryStream(imageByteArray))
             {
-                // call Rekonition API
-                List<Label> labels = await RekognitionUtil.GetObjectDetailFromStream(this.RekognitionClient, ms); 
-                List<string> labelNames = new List<string>();
-                foreach (Label label in labels)
-                {
-                    labelNames.Add(label.Name);
-                    Console.Write(label.Name + " ");
-                }
-                var matchedObject = _context.StageObject.Where(x => x.game_id == dto.game_id && 
-                                        x.stage_id == dto.stage_id &&
-                                        x.found_yn == "N" &&
-                                        labelNames.Contains(x.object_name)).FirstOrDefault();
-                if (matchedObject != null)
-                {
-                    //Console.WriteLine("Matched object: " + matchedObject.object_name);
-                    stageScore.object_name = matchedObject.object_name;
-                    stageScore.object_score = matchedObject.object_score;
-                    matchedObject.found_yn = "Y";
 
-                    _context.StageObject.Update(matchedObject);
-                    await _context.SaveChangesAsync();
-                }
-                else
+                if (dto.stage_id == 1)
                 {
-                    Console.WriteLine("no matched object");
+                    // call Rekonition API
+                    List<Label> labels = await RekognitionUtil.GetObjectDetailFromStream(this.RekognitionClient, ms); 
+                    List<string> labelNames = new List<string>();
+                    foreach (Label label in labels)
+                    {
+                        labelNames.Add(label.Name);
+                        Console.Write(label.Name + " ");
+                    }
+                    var matchedObject = _context.StageObject.Where(x => x.game_id == dto.game_id && 
+                                            x.stage_id == dto.stage_id &&
+                                            x.found_yn == "N" &&
+                                            labelNames.Contains(x.object_name)).FirstOrDefault();
+                    if (matchedObject != null)
+                    {
+                        //Console.WriteLine("Matched object: " + matchedObject.object_name);
+                        stageScore.object_name = matchedObject.object_name;
+                        stageScore.object_score = matchedObject.object_score;
+                        matchedObject.found_yn = "Y";
+
+                        _context.StageObject.Update(matchedObject);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        Console.WriteLine("no matched object");
+                    }
+                }
+                else if (dto.stage_id == 2)
+                {
+                    // call Textract API
+                    List<Block> blocks = await TextractUtil.GetTextFromStream(this.TextractClient, ms); 
+                    List<string> texts = new List<string>();
+                    foreach (Block block in blocks)
+                    {
+                        texts.Add(block.Text);
+                        Console.Write(block.Text + " ");
+                    }
+                    var matchedObject = _context.StageObject.Where(x => x.game_id == dto.game_id && 
+                                            x.stage_id == dto.stage_id &&
+                                            x.found_yn == "N" &&
+                                            texts.Contains(x.object_name)).FirstOrDefault();
+                    if (matchedObject != null)
+                    {
+                        //Console.WriteLine("Matched object: " + matchedObject.object_name);
+                        stageScore.object_name = matchedObject.object_name;
+                        stageScore.object_score = matchedObject.object_score;
+                        matchedObject.found_yn = "Y";
+
+                        _context.StageObject.Update(matchedObject);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        Console.WriteLine("no matched object");
+                    }
                 }
             }
             
             return Ok(stageScore);            
         }  
     
-        private List<string> GetRandomStageObjectList(int difficulty, int objectCount)
+        private List<StageObjectDTO> GetRandomStageObjectList(int difficulty, int objectCount, string language = "ko")
         {
-            List<string> objectList = new List<String>();
+            List<string> nameList = new List<String>();
+            List<StageObjectDTO> objectList = new List<StageObjectDTO>();
 
             int recordCount = _context.Object.Where(x => x.difficulty == difficulty).Count();
             var records = _context.Object.Where(x => x.difficulty == difficulty);
@@ -169,9 +212,32 @@ namespace BuildersFair_API.Controllers
                     int randomRecord = new Random().Next() % recordCount;
                     var record = records.Skip(randomRecord).Take(1).First();
 
-                    if (objectList.Contains(record.object_name) == false)
+                    if (nameList.Contains(record.object_name) == false)
                     {
-                        objectList.Add(record.object_name);
+                        nameList.Add(record.object_name);
+
+                        StageObjectDTO stageObject = new StageObjectDTO();
+                        stageObject.object_name = record.object_name;
+
+                        switch (language)
+                        {
+                            case "ko":
+                                stageObject.object_display_name = record.object_name_ko;
+                                break;
+                            case "ja":
+                                stageObject.object_display_name = record.object_name_ja;
+                                break;
+                            case "cn":
+                                stageObject.object_display_name = record.object_name_cn;
+                                break;
+                            case "es":
+                                stageObject.object_display_name = record.object_name_es;
+                                break;
+                        }
+                        stageObject.object_image_uri = "";
+
+                        objectList.Add(stageObject);
+
                         loop = false;
                     }
                 }

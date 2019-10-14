@@ -12,6 +12,10 @@ namespace BuildersFair_API.Models
         public string object_name { get; set; }
         public int object_score { get; set; }
         public int difficulty { get; set; }
-        public DateTime log_date { get; set; } 
+        public DateTime log_date { get; set; }
+        public string object_name_ko { get; set; }
+        public string object_name_cn { get; set; }
+        public string object_name_ja { get; set; }
+        public string object_name_es { get; set; }
     }
 }
