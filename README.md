@@ -44,7 +44,7 @@ This demo is to play a simple game using facial expression to be recognized usin
    - Debugger for Chrome
    - Material Icon Theme
    - Path Intellisense
-   - Prettier
+   - Prettier - Code Formatter
    - TSLint
   
 ### 3.2 How to clone the repository 
