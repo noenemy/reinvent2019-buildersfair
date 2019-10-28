@@ -35,7 +35,7 @@ This demo is to play a simple game using facial expression to be recognized usin
    - C# by OmniSharp
    - C# Extensions
    - NuGet package manager
-   - Angular v6 snippets
+   - Angular snippets (Version 8)
    - Angular files
    - Angular2-switcher
    - Angular Language service
